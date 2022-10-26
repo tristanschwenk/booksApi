@@ -1,4 +1,6 @@
 import express from "express"
+import { validIdMiddleware } from "../middlewares/validId.js"
+import { validSchemaMiddleware } from "../middlewares/validSchema.js"
 import { bookController } from "./book.controller.js"
 
 export const bookRouter = express.Router()
@@ -7,12 +9,12 @@ bookRouter.get('/', bookController.findAll)
 
 bookRouter.get('/paginate', bookController.find)
 
-bookRouter.get('/:id', bookController.findOne)
+bookRouter.get('/:id', validIdMiddleware, bookController.findOne)
 
-bookRouter.post('/', bookController.create)
+bookRouter.post('/', validSchemaMiddleware, bookController.create)
 
-bookRouter.delete("/:id", bookController.remove)
+bookRouter.delete("/:id", validIdMiddleware, bookController.remove)
 
-bookRouter.patch('/:id', bookController.update)
+bookRouter.patch('/:id', validIdMiddleware,  bookController.update)
 
-bookRouter.put('/:id', bookController.replace)
+bookRouter.put('/:id', validIdMiddleware, bookController.replace)
