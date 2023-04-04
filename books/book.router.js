@@ -1,4 +1,5 @@
 import express from "express"
+import { ErrorMiddleware } from "../middlewares/error.js"
 import { validIdMiddleware } from "../middlewares/validId.js"
 import { validSchemaMiddleware } from "../middlewares/validSchema.js"
 import { bookController } from "./book.controller.js"
@@ -18,3 +19,5 @@ bookRouter.delete("/:id", validIdMiddleware, bookController.remove)
 bookRouter.patch('/:id', validIdMiddleware,  bookController.update)
 
 bookRouter.put('/:id', validIdMiddleware, bookController.replace)
+
+bookRouter.use(ErrorMiddleware)

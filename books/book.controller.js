@@ -1,67 +1,81 @@
+import { ErrorOutOfRange } from "../middlewares/error.js"
 import { parseData, parseDataArray } from "../utils.js"
 import {
     booksService
 } from "./books.service.js"
 
 export const bookController = {
-    findAll: (req, res) => {
-        const books = booksService.findAll()
-        return res.status(200).json(parseDataArray(books))
+    findAll: async (req, res) => {
+        const books = await booksService.findAll()
+        return res.status(200).json(books)
     },
 
-    find: (req, res) => {
+    find: async (req, res) => {
         const {
             start,
             size
         } = req.query
-        const books = booksService.findByPage(start, size)
+        const books = await booksService.findByPage(start, size)
 
-        return res.status(200).json(parseData(books))
+        return res.status(200).json(books)
     },
 
-    findOne: (req, res) => {
-        const {
-            id
-        } = req.params
-        const book = booksService.findOne(id)
-        return res.status(200).json(parseData(book))
+    findOne: async (req, res, next) => {
+        try {
+            const {
+                id
+            } = req.params
+
+            const book = await booksService.findOne(id)
+            return res.status(200).json(book)
+        } catch (error) {
+            next(error)
+        }
+        
     },
 
-    create: (req, res) => {
-        const book = booksService.create(req.body)
-        return res.status(201).json(parseData(book))
+    create: async (req, res) => {
+        const book = await booksService.create(req.body)
+        return res.status(201).json(book)
     },
 
-    remove: (req, res) => {
+    remove: async (req, res, next) => {
         const {
             id
         } = req.params
         try {
-            const book = booksService.delete(id)
-            return res.status(200).json(parseData(deleteItem))
+            const book = await booksService.delete(id)
+            return res.status(200).json(book)
         } catch (error) {
-            console.error(error)
-            return res.status(500).json({
-                error: "An error occured"
-            })
+            next(error)
         }
     },
 
-    update: (req, res) => {
-        const {
-            id
-        } = req.params
-        const book = booksService.patch(req.body, id)
-        return res.status(200).json(parseData(book))
+    update: async (req, res, next) => {
+        try {
+            const {
+                id
+            } = req.params
+            const book = await booksService.patch(req.body, id)
+            return res.status(200).json(book)
+        } catch (error) {
+            next(error)   
+        }
+        
     },
 
-    replace: (req, res) => {
-        const {
-            id
-        } = req.params
-        const book = booksService.put(req.body, id)
-
-        return res.status(200).json(parseData(book))
+    replace: async (req, res, next) => {
+        try {
+            const {
+                id
+            } = req.params
+            const book = await booksService.put(req.body, id)
+    
+            return res.status(200).json(book)
+        } catch (error) {
+            next(error)
+        }
+        
     }
 }
 
